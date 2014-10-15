@@ -1,0 +1,16 @@
+{
+  "name": "http-shark",
+  "private": "true",
+  "version": "0.0.0",
+  "authors": [
+    "Josh Nussbaum <joshnuss@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "www/lib/bower_components",
+    "www/test",
+    "www/tests"
+  ]
+}

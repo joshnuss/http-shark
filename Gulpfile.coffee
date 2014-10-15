@@ -1,7 +1,7 @@
 gulp = require("gulp")
 gutil = require("gulp-util")
 concat = require("gulp-concat")
-sass = require("gulp-sass")
+sass = require("gulp-ruby-sass")
 minifyCss = require("gulp-minify-css")
 rename = require("gulp-rename")
 coffee = require("gulp-coffee")
@@ -10,7 +10,7 @@ jade = require("gulp-jade")
 
 paths =
   sass:
-    source: ["./www/sass/**/*.scss"]
+    source: ["./www/sass/**/*.sass"]
     dest: './www/css'
   coffee:
     source: ["./www/coffee/**/*.coffee"]
@@ -37,10 +37,8 @@ gulp.task "coffee", (done) ->
       .pipe(gulp.dest(paths.coffee.dest))
 
 gulp.task "sass", (done) ->
-  gulp.src("./www/sass/application.scss")
-      .pipe(sourcemaps.init())
-      .pipe(sass())
-      .pipe(sourcemaps.write())
+  gulp.src("./www/sass/application.sass")
+      .pipe(sass({sourcemap: true, sourcemapPath: paths.sass.dest}))
       .pipe(gulp.dest(paths.sass.dest))
       .pipe(minifyCss(keepSpecialComments: 0))
       .pipe(rename(extname: ".min.css"))

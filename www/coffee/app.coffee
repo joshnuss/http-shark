@@ -1,1 +1,1 @@
-angular.module('shark', [])
+window.Shark = angular.module('shark', ['btford.socket-io'])

@@ -7,7 +7,10 @@ Shark.service 'Traces', (Socket, Proxies) ->
       Socket.emit('trace:remove', trace)
 
   Socket.on 'trace:add', (trace) ->
-    service.traces.unshift(trace)
+    if Proxies.paused
+      service.pausedTraces.unshift(trace)
+    else
+      service.traces.unshift(trace)
 
   Socket.on 'trace:list', (traces) ->
     service.traces = traces

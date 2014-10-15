@@ -22,19 +22,20 @@ html
           ul.nav.navbar-nav.navbar-right
             li(ng-show='selected')
               a(ng-click='togglePaused()')
-                span(ng-show='paused') Run
-                span(ng-hide='paused') Pause
+                span.glyphicon.glyphicon-pause(ng-show='paused')
+                span.glyphicon.glyphicon-play(ng-hide='paused')
             li
               a.dropdown-toggle(href='#', data-toggle='dropdown')
                 span(ng-show='selected' ng-bind='selected')
-                span(ng-hide='selected') Proxy
+                span(ng-hide='selected') Subdomains
                 span.caret
 
               ul.dropdown-menu(role='menu')
                 li
                   a
                     span.glyphicon.glyphicon-plus
-                    | Add
+                    | &nbsp;
+                    | Add Subdomain
 
                 li.divider
 
@@ -48,12 +49,12 @@ html
         .row(ng-controller='AddProxyCtrl')
           .col-md-8.col-md-offset-2
             .jumbotron
-              h1 Add a Proxy
+              h1 Add a Subdomain
 
               form(role='form' ng-submit='add()')
                 .form-group
                   label.control-label(for='url') Target URL
-                  input.form-control(name='url' type='url' required ng-model='newProxy.url')
+                  input.form-control(name='url' type='url' required ng-model='newProxy.url' autofocus)
 
                 .form-group
                   label.control-label(for='alias') Incoming Subdomain
@@ -61,14 +62,20 @@ html
 
                 button.btn.btn-lg.btn-block.btn-primary
                   span.glyphicon.glyphicon-plus-sign
+                  | &nbsp;
                   | Add
 
       .container-fluid(ng-if='selected' ng-controller='TracesCtrl')
+        .row(ng-show='pausedTraces.length > 0')
+          .col-md-12
+            p
+              | Paused. {{pausedTraces.length}} new traces added.
+
         .row(ng-repeat='trace in traces')
           .col-md-12
+            span.code.badge(ng-bind='trace.response.code')
             span.verb(ng-bind='trace.request.method')
             span.url(ng-bind='trace.request.url')
-            span.code(ng-bind='trace.response.code')
 
     script(src='lib/jquery/dist/jquery.js')
     script(src='lib/bootstrap-sass/dist/js/bootstrap.js')

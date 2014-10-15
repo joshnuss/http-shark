@@ -11,13 +11,13 @@ jade = require("gulp-jade")
 paths =
   sass:
     source: ["./www/sass/**/*.sass"]
-    dest: './www/css'
+    dest: './www/compiled/css'
   coffee:
     source: ["./www/coffee/**/*.coffee"]
-    dest: './www/js'
+    dest: './www/compiled/js'
   templates:
-    source: ["./www/jade/**/*.jade"]
-    dest: './www/views'
+    source: ["./www/**/*.jade"]
+    dest: './www/compiled'
 
 gulp.task "default", ["sass", "coffee", "templates"]
 

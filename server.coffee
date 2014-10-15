@@ -5,7 +5,7 @@ io = require('socket.io')(server)
 
 server.listen(process.env.PORT || 3000)
 
-app.use('/dash', express.static(__dirname + '/www'))
+app.use('/dash', express.static(__dirname + '/www/compiled'))
 
 mappings = []
 

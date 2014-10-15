@@ -1,0 +1,19 @@
+{
+  "name": "proxy",
+  "version": "0.0.0",
+  "private": "true",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "~4.9.7",
+    "socket.io": "~1.1.0"
+  },
+  "devDependencies": {
+    "coffee-script": "~1.8.0"
+  }
+}

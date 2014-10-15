@@ -18,4 +18,4 @@ MIT
 
 ## Author
 
-Joshua Nussbuam
+Joshua Nussbaum

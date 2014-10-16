@@ -16,3 +16,6 @@ Shark.controller 'ProxiesCtrl', ($scope, Proxies) ->
 
   $scope.select = (alias) ->
     Proxies.select(alias)
+
+  $scope.remove = (alias) ->
+    Proxies.remove(alias)

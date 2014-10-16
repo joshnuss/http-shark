@@ -21,7 +21,7 @@ html
         .navbar-collapse.collapse
           ul.nav.navbar-nav.navbar-right
             li(ng-show='selected')
-              a(ng-click='togglePaused()')
+              a.btn.btn-default(ng-click='togglePaused()' ng-class="{'btn-primary': !paused}")
                 span.glyphicon.glyphicon-pause(ng-show='paused')
                 span.glyphicon.glyphicon-play(ng-hide='paused')
             li
@@ -43,6 +43,7 @@ html
                   a(ng-click='select(alias)')
                     b(ng-bind='alias')
                     p(ng-bind='url')
+                    span.glyphicon.glyphicon-remove(ng-click='remove(alias)')
 
     div(ng-controller='ProxiesCtrl')
       .container(ng-if='!selected')

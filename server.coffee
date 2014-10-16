@@ -1,43 +1,76 @@
-express = require('express')
-app     = express()
-server  = require('http').Server(app)
-io      = require('socket.io')(server)
-proxies = {}
-traces  = {}
-sockets = []
+express   = require('express')
+app       = express()
+server    = require('http').Server(app)
+io        = require('socket.io')(server)
+httpProxy = require('http-proxy')
+url       = require('url')
+proxies   = {}
+traces    = {}
+sockets   = []
 
 server.listen(process.env.PORT || 3000)
+
+proxy = httpProxy.createProxyServer()
+
+proxy.on 'error', (e) ->
+  response.writeHead(500)
+  response.end("Problem with request: #{e.message}")
+
+proxy.on 'proxyRes', (proxyResponse, request, response) ->
+  body = ''
+  requestBody = ''
+
+  subdomain = request.headers.host.split('.')[0]
+
+  request.on 'data', (chunk) ->
+    requestBody += chunk
+
+  proxyResponse.on 'data', (chunk) ->
+    body += chunk
+
+  proxyResponse.on 'end', ->
+    console.log("RESPONSE: #{proxyResponse.statusCode}")
+    time = new Date().getTime()
+
+    trace =
+      at: time
+      request:
+        ip: request.connection.remoteAddress
+        url: request.url
+        method: request.method
+        headers: request.headers
+        body: requestBody
+      response:
+        code: proxyResponse.statusCode
+        headers: proxyResponse.headers
+        body: body
+
+    traces[subdomain] ||= []
+    traces[subdomain].push(trace)
+
+    sockets.forEach (socket) ->
+      socket.emit('trace:add', trace) if socket.alias == subdomain
 
 app.use('/dash', express.static(__dirname + '/www/compiled'))
 app.use('/dash/lib', express.static(__dirname + '/www/lib'))
 
 app.use (request, response) ->
-  alias = 'weather'
-  traces[alias] || = []
+  host = request.headers.host
+  subdomain = host.split('.')[0]
+  targetDomain = proxies[subdomain]
 
-  trace =
-    at: (new Date()).getTime()
-    request:
-      method: request.method
-      ip: request.connection.removeAddress
-      url: request.url
-      headers: request.headers
-      body: '<empty>'
-    response:
-      code: 200
-      headers: request.headers
-      body: '<empty>'
+  if !targetDomain
+    response.writeHead(404)
+    response.end("Mapping for #{host}#{request.url} not found.\n")
+    console.log("ERROR: Mapping for #{host}#{request.url} not found.")
+  else
+    targetUrl = targetDomain + url.parse(request.url).path
 
-  traces[alias].push(trace)
+    console.log("PROXY: from #{request.headers.host}#{request.url} to #{targetUrl}")
 
-  sockets.forEach (socket) ->
-    socket.emit('trace:add', trace) if socket.alias == alias
+    request.url = targetUrl
 
-  response.end("test")
-
-# remove me
-#proxies['weather'] = 'http://api.openweathermap.org'
-#proxies['google'] = 'http://api.google.com'
+    proxy.web(request, response, {target: targetDomain})
 
 io.on 'connection', (socket) ->
   sockets.push(socket)

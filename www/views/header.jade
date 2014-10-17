@@ -11,7 +11,7 @@
     .navbar-collapse.collapse
       ul.nav.navbar-nav.navbar-right
         li(ng-show='selected')
-          a.btn.paused(ng-click='togglePaused()' ng-class="{'btn-primary': !paused}")
+          a.paused(ng-click='togglePaused()')
             span.glyphicon.glyphicon-pause(ng-show='paused')
             span.glyphicon.glyphicon-play(ng-hide='paused')
         li

@@ -1,0 +1,19 @@
+.container
+  .jumbotron
+    h1
+      | Update&nbsp;
+      b {{alias}}
+
+    form(role='form' ng-submit='update()')
+      .form-group
+        label.control-label(for='url') Target URL
+        input.form-control.input-lg(name='url' type='url' required ng-model='proxy.url' autofocus)
+
+      .form-group
+        label.control-label(for='alias') Incoming Subdomain
+        input.form-control.input-lg(name='alias' type='text' required ng-model='proxy.alias')
+
+      button.btn.btn-lg.btn-block.btn-primary
+        span.glyphicon.glyphicon-floppy-disk
+        | &nbsp;
+        | Save

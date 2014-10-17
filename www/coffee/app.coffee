@@ -11,7 +11,8 @@ Shark.config ($routeProvider) ->
       templateUrl: 'views/proxies/add.html'
 
     .when '/proxies/update/:proxyId',
-      template: 'update'
+      controller: 'UpdateProxyCtrl'
+      templateUrl: 'views/proxies/update.html'
 
     .when '/trace',
       controller: 'TracesCtrl'

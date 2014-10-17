@@ -12,27 +12,6 @@ html
 
     ng-view
 
-    div(ng-controller='ProxiesCtrl')
-      .container(ng-if='!selected')
-        .row(ng-controller='AddProxyCtrl')
-          .col-md-8.col-md-offset-2
-            .jumbotron
-              h1 Add a Subdomain
-
-              form(role='form' ng-submit='add()')
-                .form-group
-                  label.control-label(for='url') Target URL
-                  input.form-control(name='url' type='url' required ng-model='newProxy.url' autofocus)
-
-                .form-group
-                  label.control-label(for='alias') Incoming Subdomain
-                  input.form-control(name='alias' type='text' required ng-model='newProxy.alias')
-
-                button.btn.btn-lg.btn-block.btn-primary
-                  span.glyphicon.glyphicon-plus-sign
-                  | &nbsp;
-                  | Add
-
     script(src='lib/jquery/dist/jquery.js')
     script(src='lib/bootstrap-sass/dist/js/bootstrap.js')
     script(src='/socket.io/socket.io.js')

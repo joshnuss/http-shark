@@ -1,6 +1,7 @@
-Shark.controller 'AddProxyCtrl', ($scope, Proxies) ->
+Shark.controller 'AddProxyCtrl', ($scope, Proxies, $location) ->
   $scope.newProxy = {}
 
   $scope.add = ->
     Proxies.add($scope.newProxy)
-    $scope.newProxy = {}
+
+    $location.path("/dash/#/proxies")

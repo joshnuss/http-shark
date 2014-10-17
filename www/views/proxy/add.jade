@@ -1,0 +1,17 @@
+.container
+  .jumbotron
+    h1 Add a Subdomain
+
+    form(role='form' ng-submit='add()')
+      .form-group
+        label.control-label(for='url') Target URL
+        input.form-control.input-lg(name='url' type='url' required ng-model='newProxy.url' autofocus)
+
+      .form-group
+        label.control-label(for='alias') Incoming Subdomain
+        input.form-control.input-lg(name='alias' type='text' required ng-model='newProxy.alias')
+
+      button.btn.btn-lg.btn-block.btn-primary
+        span.glyphicon.glyphicon-plus-sign
+        | &nbsp;
+        | Add

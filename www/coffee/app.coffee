@@ -6,7 +6,8 @@ Shark.config ($routeProvider) ->
       template: 'proxies'
 
     .when '/proxies/add',
-      template: 'add'
+      controller: 'AddProxyCtrl'
+      templateUrl: 'views/proxy/add.html'
 
     .when '/proxies/update/:proxyId',
       template: 'update'
@@ -16,4 +17,4 @@ Shark.config ($routeProvider) ->
       templateUrl: 'views/traces.html'
 
     .otherwise
-      redirectTo: '/trace'
+      redirectTo: '/proxies'

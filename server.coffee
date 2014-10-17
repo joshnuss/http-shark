@@ -2,110 +2,130 @@ express   = require('express')
 app       = express()
 server    = require('http').Server(app)
 io        = require('socket.io')(server)
-httpProxy = require('http-proxy')
+httpProxy = require('http-proxy').createProxyServer()
 url       = require('url')
+mongo     = require('mongodb').MongoClient
 proxies   = {}
 traces    = {}
 sockets   = []
 
 server.listen(process.env.PORT || 3000)
 
-proxy = httpProxy.createProxyServer()
+mongo.connect "mongodb://localhost:27017/proxy", (err, db) ->
+  throw err if err
 
-proxy.on 'error', (e) ->
-  response.writeHead(500)
-  response.end("Problem with request: #{e.message}")
+  withProxyCollection = (callback) ->
+    db.collection 'proxies', (err, collection) ->
+      throw err if err
+      callback(collection)
 
-proxy.on 'proxyRes', (proxyResponse, request, response) ->
-  body = ''
-  requestBody = ''
+  withProxyList = (callback) ->
+    withProxyCollection (collection) ->
+      collection.find().toArray (err, proxies) ->
+        throw err if err
+        callback(proxies)
 
-  subdomain = request.headers.host.split('.')[0]
+  httpProxy.on 'error', (e, request, response) ->
+    response.writeHead(500)
+    response.end("Problem with request: #{e.message}")
 
-  request.on 'data', (chunk) ->
-    requestBody += chunk
+  httpProxy.on 'proxyRes', (proxyResponse, request, response) ->
+    body = ''
+    requestBody = ''
 
-  proxyResponse.on 'data', (chunk) ->
-    body += chunk
+    subdomain = request.headers.host.split('.')[0]
 
-  proxyResponse.on 'end', ->
-    console.log("RESPONSE: #{proxyResponse.statusCode}")
-    time = new Date().getTime()
+    request.on 'data', (chunk) ->
+      requestBody += chunk
 
-    trace =
-      at: time
-      request:
-        ip: request.connection.remoteAddress
-        url: request.url
-        method: request.method
-        headers: request.headers
-        body: requestBody
-      response:
-        code: proxyResponse.statusCode
-        headers: proxyResponse.headers
-        body: body
+    proxyResponse.on 'data', (chunk) ->
+      body += chunk
 
-    traces[subdomain] ||= []
-    traces[subdomain].push(trace)
+    proxyResponse.on 'end', ->
+      console.log("RESPONSE: #{proxyResponse.statusCode}")
+      time = new Date().getTime()
 
-    sockets.forEach (socket) ->
-      socket.emit('trace:add', trace) if socket.alias == subdomain
+      trace =
+        at: time
+        request:
+          ip: request.connection.remoteAddress
+          url: request.url
+          method: request.method
+          headers: request.headers
+          body: requestBody
+        response:
+          code: proxyResponse.statusCode
+          headers: proxyResponse.headers
+          body: body
 
-app.use('/dash', express.static(__dirname + '/www/compiled'))
-app.use('/dash/lib', express.static(__dirname + '/www/lib'))
+      traces[subdomain] ||= []
+      traces[subdomain].push(trace)
 
-app.use (request, response) ->
-  host = request.headers.host
-  subdomain = host.split('.')[0]
-  targetDomain = proxies[subdomain]
+      db.collection "subdomain.#{subdomain}", (err, collection) ->
+        collection.insert trace, (err, result) ->
+          sockets.forEach (socket) ->
+            socket.emit('trace:add', result[0]) if socket.alias == subdomain
 
-  if !targetDomain
-    response.writeHead(404)
-    response.end("Mapping for #{host}#{request.url} not found.\n")
-    console.log("ERROR: Mapping for #{host}#{request.url} not found.")
-  else
-    targetUrl = targetDomain + url.parse(request.url).path
+  app.use('/dash', express.static(__dirname + '/www/compiled'))
+  app.use('/dash/lib', express.static(__dirname + '/www/lib'))
 
-    console.log("PROXY: from #{request.headers.host}#{request.url} to #{targetUrl}")
+  app.use (request, response) ->
+    host = request.headers.host
+    subdomain = host.split('.')[0]
 
-    request.url = targetUrl
+    withProxyCollection (collection) ->
+      collection.findOne {alias: subdomain}, (err, proxy) ->
+        if err
+          response.writeHead(404)
+          response.end("Mapping for #{host}#{request.url} not found.\n")
+          console.log("ERROR: Mapping for #{host}#{request.url} not found.")
+        else
+          targetDomain = proxy.url
+          targetUrl = targetDomain + url.parse(request.url).path
 
-    proxy.web(request, response, {target: targetDomain})
+          console.log("PROXY: from #{request.headers.host}#{request.url} to #{targetUrl}")
 
-io.on 'connection', (socket) ->
-  sockets.push(socket)
-  socket.emit('proxy:list', proxies)
+          request.url = targetUrl
 
-  broadcastConfig = ->
-    socket.emit('proxy:list', proxies)
-    socket.broadcast.emit('proxy:list', proxies)
+          httpProxy.web(request, response, {target: targetDomain})
 
-  socket.on 'proxy:add', (proxy) ->
-    proxies[proxy.alias] = proxy.url
+  io.on 'connection', (socket) ->
+    sockets.push(socket)
 
-    broadcastConfig()
+    withProxyList (proxies) ->
+      socket.emit('proxy:list', proxies)
 
-  socket.on 'proxy:update', (data) ->
-    delete proxies[data.old.alias]
-    proxies[data.new.alias] = data.new.url
+    broadcastConfig = ->
+      withProxyList (proxies) ->
+        socket.emit('proxy:list', proxies)
+        socket.broadcast.emit('proxy:list', proxies)
 
-    sockets.forEach (socket) ->
-      socket.alias = data.new.alias if socket.alias == data.old.alias
+    socket.on 'proxy:add', (proxy) ->
+      proxies[proxy.alias] = proxy.url
 
-    broadcastConfig()
+      broadcastConfig()
 
-  socket.on 'proxy:remove', (alias) ->
-    delete proxies[alias]
-    broadcastConfig()
+    socket.on 'proxy:update', (data) ->
+      delete proxies[data.old.alias]
+      proxies[data.new.alias] = data.new.url
 
-  socket.on 'proxy:monitor', (alias) ->
-    socket.alias = alias
+      sockets.forEach (socket) ->
+        socket.alias = data.new.alias if socket.alias == data.old.alias
 
-  socket.on 'trace:clear', (data, callback) ->
-    true
+      broadcastConfig()
 
-  socket.on 'trace:remove', (data, callback) ->
-    true
+    socket.on 'proxy:remove', (alias) ->
+      delete proxies[alias]
+      broadcastConfig()
 
-  socket.on 'disconnected', ->
-    sockets.splice(sockets.indexOf(socket), 1)
+    socket.on 'proxy:monitor', (alias) ->
+      socket.alias = alias
+
+    socket.on 'trace:clear', (data, callback) ->
+      true
+
+    socket.on 'trace:remove', (data, callback) ->
+      true
+
+    socket.on 'disconnected', ->
+      sockets.splice(sockets.indexOf(socket), 1)

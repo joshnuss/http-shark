@@ -26,7 +26,7 @@ html
                 span.glyphicon.glyphicon-play(ng-hide='paused')
             li
               a.dropdown-toggle(href='#', data-toggle='dropdown')
-                span(ng-show='selected' ng-bind='selected')
+                span(ng-show='selected' ng-bind='selected.alias')
                 span(ng-hide='selected') Subdomains
                 span.caret
 
@@ -39,11 +39,11 @@ html
 
                 li.divider
 
-                li(ng-repeat='(alias, url) in proxies')
-                  a(ng-click='select(alias)')
-                    b(ng-bind='alias')
-                    p(ng-bind='url')
-                    span.glyphicon.glyphicon-remove(ng-click='remove(alias)')
+                li(ng-repeat='proxy in proxies')
+                  a(ng-click='select(proxy)')
+                    b(ng-bind='proxy.alias')
+                    p(ng-bind='proxy.url')
+                    span.glyphicon.glyphicon-remove(ng-click='remove(proxy)')
 
     div(ng-controller='ProxiesCtrl')
       .container(ng-if='!selected')

@@ -14,6 +14,9 @@ Shark.controller 'ProxiesCtrl', ($scope, Proxies) ->
   $scope.togglePaused = ->
     Proxies.paused = !Proxies.paused
 
+  $scope.pause = ->
+    Proxies.paused = true
+
   $scope.select = (proxy) ->
     Proxies.select(proxy._id)
 

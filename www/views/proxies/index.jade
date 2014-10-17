@@ -16,8 +16,11 @@
         p(ng-bind='proxy.url')
 
         .actions.pull-right
-          a.select(ng-click='select(proxy)' title='Start tracing')
+          a.select(ng-click='select(proxy)' ng-if='selected != proxy || paused' title='Start tracing')
             span.glyphicon.glyphicon-play
+
+          a.select(ng-click='pause()' ng-if='selected == proxy && !paused' title='Pause tracing')
+            span.glyphicon.glyphicon-pause
 
           a.remove(ng-click='remove(proxy)' title='Remove')
             span.glyphicon.glyphicon-remove

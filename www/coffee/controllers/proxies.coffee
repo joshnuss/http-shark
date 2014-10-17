@@ -20,6 +20,7 @@ Shark.controller 'ProxiesCtrl', ($scope, Proxies, $location) ->
 
   $scope.togglePaused = ->
     Proxies.paused = !Proxies.paused
+    $location.path("/trace") if !Proxies.paused
 
   $scope.pause = ->
     Proxies.paused = true

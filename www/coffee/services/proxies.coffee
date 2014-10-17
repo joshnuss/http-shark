@@ -35,6 +35,14 @@ Shark.service 'Proxies', (Socket) ->
       else
         service.selected = null
 
+    host: ->
+      parts = window.location.hostname.split('.')
+
+      if parts.length > 2
+        parts = parts.slice(1)
+
+      parts.join(".")
+
   Socket.on 'proxy:list', (list) ->
     service.all = list
 

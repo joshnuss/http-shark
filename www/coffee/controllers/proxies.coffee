@@ -2,12 +2,7 @@ Shark.controller 'ProxiesCtrl', ($scope, Proxies, $location) ->
   $scope.proxies = {}
   $scope.paused = false
 
-  parts = window.location.hostname.split('.')
-
-  if parts.length > 2
-    parts = parts.slice(1)
-
-  $scope.host = parts.join(".")
+  $scope.host = Proxies.host()
 
   $scope.$watch (-> Proxies.all), ->
     $scope.proxies = Proxies.all

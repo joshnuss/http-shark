@@ -1,12 +1,15 @@
 .container-fluid
   .row(ng-show='pausedTraces.length > 0')
     .col-md-12
-      p
-        | Paused. {{pausedTraces.length}} new traces added.
+      .alert.alert-warning
+        b Paused.
+        | &nbsp;{{pausedTraces.length}} new traces added.&nbsp;
+        a View >
 
-  .row(ng-if='traces.length == 0 && pausedTraces.length == 0')
+  .row(ng-if='traces.length == 0')
     .col-md-12
-      p No traces found.
+      .alert.alert-info
+        p <b>Nothing to show.</b> Try issuing a <code>curl http://{{proxy.alias}}.{{host}}/some-path</code>
 
   .row(ng-repeat='trace in traces')
     .col-md-12

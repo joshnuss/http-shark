@@ -1,4 +1,4 @@
-Shark.controller 'ProxiesCtrl', ($scope, Proxies) ->
+Shark.controller 'ProxiesCtrl', ($scope, Proxies, $location) ->
   $scope.proxies = {}
   $scope.paused = false
 
@@ -26,6 +26,7 @@ Shark.controller 'ProxiesCtrl', ($scope, Proxies) ->
 
   $scope.select = (proxy) ->
     Proxies.select(proxy._id)
+    $location.path("/trace")
 
   $scope.remove = (proxy) ->
     if confirm("Are you sure you want to remove #{proxy.alias}?")

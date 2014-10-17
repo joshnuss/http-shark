@@ -1,21 +1,25 @@
 #proxies.container
   .row
     .col-md-12
-      .pull-right
-        a(href="/dash/#/proxies/add")
-          span.glyphicon.glyphicon-plus
-          | &nbsp;
-          | Add Subdomain
+      .page-header
+        .pull-right
+          a(href="/dash/#/proxies/add")
+            span.glyphicon.glyphicon-plus
+            | &nbsp;
+            | Add Subdomain
 
-      h1 Proxies
+        h1 Proxies
 
   .row.proxy(ng-repeat="(id, proxy) in proxies")
     .col-md-12
       .well
         h2
+          | http://
           b(ng-bind='proxy.alias')
           | .{{host}}
-        p(ng-bind='proxy.url')
+        p
+          span.glyphicon.glyphicon-arrow-right
+          | &nbsp;{{proxy.url}}
 
         .actions.pull-right
           a.select(ng-click='select(proxy)' ng-if='selected != proxy || paused' title='Start tracing')

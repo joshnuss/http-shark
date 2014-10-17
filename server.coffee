@@ -11,7 +11,9 @@ sockets   = []
 
 server.listen(process.env.PORT || 3000)
 
-mongo.connect "mongodb://localhost:27017/proxy", (err, db) ->
+throw "Missing MONGO_URL environment variable" unless process.env.MONGO_URL
+
+mongo.connect process.env.MONGO_URL, (err, db) ->
   throw err if err
 
   withProxyCollection = (callback) ->

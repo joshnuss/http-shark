@@ -130,4 +130,4 @@ mongo.connect process.env.MONGO_URL, (err, db) ->
       true
 
     socket.on 'disconnected', ->
-      sockets.splice(sockets.indexOf(socket), 1)
+      delete sockets[sockets.indexOf(socket)]

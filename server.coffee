@@ -4,7 +4,8 @@ server    = require('http').Server(app)
 io        = require('socket.io')(server)
 httpProxy = require('http-proxy').createProxyServer()
 url       = require('url')
-mongo     = require('mongodb').MongoClient
+mongo     = require('mongodb')
+client    = mongo.MongoClient
 proxies   = {}
 traces    = {}
 sockets   = []
@@ -13,7 +14,7 @@ server.listen(process.env.PORT || 3000)
 
 throw "Missing MONGO_URL environment variable" unless process.env.MONGO_URL
 
-mongo.connect process.env.MONGO_URL, (err, db) ->
+client.connect process.env.MONGO_URL, (err, db) ->
   throw err if err
 
   withProxyCollection = (callback) ->
@@ -26,6 +27,10 @@ mongo.connect process.env.MONGO_URL, (err, db) ->
       collection.find().toArray (err, proxies) ->
         throw err if err
         callback(proxies)
+
+  withProxyList (list) ->
+    list.forEach (proxy) ->
+      proxies[proxy._id] = proxy
 
   httpProxy.on 'error', (e, request, response) ->
     response.writeHead(500)
@@ -94,31 +99,31 @@ mongo.connect process.env.MONGO_URL, (err, db) ->
   io.on 'connection', (socket) ->
     sockets.push(socket)
 
-    withProxyList (proxies) ->
-      socket.emit('proxy:list', proxies)
+    socket.emit('proxy:list', proxies)
 
     broadcastConfig = ->
-      withProxyList (proxies) ->
-        socket.emit('proxy:list', proxies)
-        socket.broadcast.emit('proxy:list', proxies)
+      socket.emit('proxy:list', proxies)
+      socket.broadcast.emit('proxy:list', proxies)
 
     socket.on 'proxy:add', (proxy) ->
-      proxies[proxy.alias] = proxy.url
+      withProxyCollection (collection) ->
+        collection.insert proxy, (err, results) ->
+          result = results[0]
+          proxies[result._id] = result
+
+          broadcastConfig()
+
+    socket.on 'proxy:update', (proxy) ->
+      delete proxies[proxy.id]
+      proxies[proxy.id] = proxy
 
       broadcastConfig()
 
-    socket.on 'proxy:update', (data) ->
-      delete proxies[data.old.alias]
-      proxies[data.new.alias] = data.new.url
-
-      sockets.forEach (socket) ->
-        socket.alias = data.new.alias if socket.alias == data.old.alias
-
-      broadcastConfig()
-
-    socket.on 'proxy:remove', (alias) ->
-      delete proxies[alias]
-      broadcastConfig()
+    socket.on 'proxy:remove', (id) ->
+      withProxyCollection (collection) ->
+        collection.remove {_id: mongo.ObjectID(id)}, (err, results) ->
+          delete proxies[id]
+          broadcastConfig()
 
     socket.on 'proxy:monitor', (alias) ->
       socket.alias = alias

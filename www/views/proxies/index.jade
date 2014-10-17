@@ -13,14 +13,6 @@
   .row.proxy(ng-repeat="(id, proxy) in proxies")
     .col-md-12
       .well(ng-click='select(proxy)')
-        h2
-          | http://
-          b(ng-bind='proxy.alias')
-          | .{{host}}
-        p
-          span.glyphicon.glyphicon-arrow-right
-          | &nbsp;{{proxy.url}}
-
         .actions.pull-right
           a.select(ng-click='select(proxy)' ng-if='selected != proxy || paused' title='Start tracing')
             span.glyphicon.glyphicon-play
@@ -33,3 +25,11 @@
 
           a.edit(ng-href="/dash/#/proxies/update/{{proxy._id}}" title='Edit')
             span.glyphicon.glyphicon-cog
+
+        h2
+          | http://
+          b(ng-bind='proxy.alias')
+          | .{{host}}
+        p
+          span.glyphicon.glyphicon-arrow-right
+          | &nbsp;{{proxy.url}}

@@ -3,6 +3,7 @@ Shark.service 'Proxies', (Socket) ->
     all: {}
 
     add: (proxy) ->
+      proxy.alias = proxy.alias.toLowerCase()
       Socket.emit('proxy:add', proxy)
 
     remove: (id) ->
@@ -11,6 +12,7 @@ Shark.service 'Proxies', (Socket) ->
       service.autoSelect() if service.selected && service.selected._id == id
 
     update: (proxy) ->
+      proxy.alias = proxy.alias.toLowerCase()
       Socket.emit('proxy:update', proxy)
 
     selected: null

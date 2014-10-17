@@ -12,7 +12,9 @@
   .row.proxy(ng-repeat="(id, proxy) in proxies")
     .col-md-12
       .well
-        h2(ng-bind='proxy.alias')
+        h2
+          b(ng-bind='proxy.alias')
+          | .{{host}}
         p(ng-bind='proxy.url')
 
         .actions.pull-right

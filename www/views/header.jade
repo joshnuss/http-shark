@@ -10,7 +10,7 @@
 
     .navbar-collapse.collapse
       ul.nav.navbar-nav.navbar-right
-        li(ng-show='selected')
+        li(ng-show='selected' ng-class="{active: !paused, playing: !paused}")
           a.paused(ng-click='togglePaused()')
             span.glyphicon.glyphicon-pause(ng-show='paused')
             span.glyphicon.glyphicon-play(ng-hide='paused')

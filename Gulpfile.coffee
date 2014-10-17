@@ -10,13 +10,13 @@ jade = require("gulp-jade")
 
 paths =
   sass:
-    source: ["./www/sass/**/*.sass"]
+    source: ["www/sass/**/*.sass"]
     dest: './www/compiled/css'
   coffee:
-    source: ["./www/coffee/**/*.coffee"]
+    source: ["www/coffee/**/*.coffee"]
     dest: './www/compiled/js'
   templates:
-    source: ["./www/**/*.jade"]
+    source: ["www/**/*.jade"]
     dest: './www/compiled'
 
 gulp.task "default", ["sass", "coffee", "templates"]
@@ -45,6 +45,9 @@ gulp.task "sass", (done) ->
       .pipe(gulp.dest(paths.sass.dest))
 
 gulp.task "watch", ->
-  gulp.watch(paths.sass.source, ["sass"])
-  gulp.watch(paths.coffee.source, ["coffee"])
-  gulp.watch(paths.templates.source, ["templates"])
+  gulp.watch paths.sass.source, ->
+    gulp.start("sass")
+  gulp.watch paths.coffee.source, ->
+    gulp.start("coffee")
+  gulp.watch paths.templates.source, ->
+    gulp.start("templates")

@@ -34,3 +34,37 @@ a
     .glyphicon
       margin: 0 3px
       font-size: 2em
+
+#traces
+  .trace
+    .well
+      margin-bottom: 2px
+
+    span.code, span.verb
+      font-weight: bold
+
+    span.code, span.verb, span.url
+      font-size: 3rem
+
+    span.glyphicon
+      font-size: 2rem
+
+    span.code
+      padding: 7px
+      border-radius: 16px
+
+    &.success .code
+      color: $brand-success
+      background: lighten($brand-success, 30%)
+
+    &.error .code
+      color: $brand-danger
+      background: lighten($brand-danger, 30%)
+
+    &.info .code
+      color: $brand-info
+      background: lighten($brand-info, 30%)
+
+    &.warning .code
+      color: $brand-warning
+      background: lighten($brand-warning, 30%)

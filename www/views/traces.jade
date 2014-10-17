@@ -1,4 +1,4 @@
-.container-fluid
+.container-fluid#traces
   .row(ng-show='pausedTraces.length > 0')
     .col-md-12
       .alert.alert-warning
@@ -11,8 +11,14 @@
       .alert.alert-info
         p <b>Nothing to show.</b> Try issuing a <code>curl http://{{proxy.alias}}.{{host}}/some-path</code>
 
-  .row(ng-repeat='trace in traces')
+  .row.trace(ng-repeat='trace in traces' class="{{statusClass(trace)}}")
     .col-md-12
-      span.code.badge(ng-bind='trace.response.code')
+      .pull-right
+        span.glyphicon.glyphicon-chevron-down
       span.verb(ng-bind='trace.request.method')
+      | &nbsp;
       span.url(ng-bind='trace.request.url')
+      | &nbsp;
+      span.code(ng-bind='trace.response.code')
+
+      hr

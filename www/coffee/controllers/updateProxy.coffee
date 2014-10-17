@@ -6,4 +6,4 @@ Shark.controller 'UpdateProxyCtrl', ($scope, Proxies, $routeParams, $location) -
   $scope.update = ->
     Proxies.update($scope.proxy)
 
-    $location.path("/dash/#/proxies")
+    $location.path("/proxies")

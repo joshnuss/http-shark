@@ -4,4 +4,4 @@ Shark.controller 'AddProxyCtrl', ($scope, Proxies, $location) ->
   $scope.add = ->
     Proxies.add($scope.newProxy)
 
-    $location.path("/dash/#/proxies")
+    $location.path("/proxies")

@@ -33,22 +33,6 @@ html
                   | &nbsp;
                   | Add
 
-      .container-fluid(ng-if='selected' ng-controller='TracesCtrl')
-        .row(ng-show='pausedTraces.length > 0')
-          .col-md-12
-            p
-              | Paused. {{pausedTraces.length}} new traces added.
-
-        .row(ng-if='traces.length == 0')
-          .col-md-12
-            p No traces found.
-
-        .row(ng-repeat='trace in traces')
-          .col-md-12
-            span.code.badge(ng-bind='trace.response.code')
-            span.verb(ng-bind='trace.request.method')
-            span.url(ng-bind='trace.request.url')
-
     script(src='lib/jquery/dist/jquery.js')
     script(src='lib/bootstrap-sass/dist/js/bootstrap.js')
     script(src='/socket.io/socket.io.js')

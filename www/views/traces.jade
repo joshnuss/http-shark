@@ -1,0 +1,15 @@
+.container-fluid
+  .row(ng-show='pausedTraces.length > 0')
+    .col-md-12
+      p
+        | Paused. {{pausedTraces.length}} new traces added.
+
+  .row(ng-if='traces.length == 0 && pausedTraces.length == 0')
+    .col-md-12
+      p No traces found.
+
+  .row(ng-repeat='trace in traces')
+    .col-md-12
+      span.code.badge(ng-bind='trace.response.code')
+      span.verb(ng-bind='trace.request.method')
+      span.url(ng-bind='trace.request.url')

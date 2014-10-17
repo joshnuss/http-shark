@@ -12,7 +12,8 @@ Shark.config ($routeProvider) ->
       template: 'update'
 
     .when '/trace',
-      template: 'trace'
+      controller: 'TracesCtrl'
+      templateUrl: 'views/traces.html'
 
     .otherwise
       redirectTo: '/trace'

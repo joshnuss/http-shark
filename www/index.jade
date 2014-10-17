@@ -72,6 +72,10 @@ html
             p
               | Paused. {{pausedTraces.length}} new traces added.
 
+        .row(ng-if='traces.length == 0')
+          .col-md-12
+            p No traces found.
+
         .row(ng-repeat='trace in traces')
           .col-md-12
             span.code.badge(ng-bind='trace.response.code')

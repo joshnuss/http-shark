@@ -44,6 +44,11 @@ mongo = (callback) ->
             collection.insert proxy, (err, results) ->
               callback(results[0])
 
+        updateProxy: (proxy, callback) ->
+          store.proxies (collection) ->
+            collection.save proxy, (err, result) ->
+              callback(proxy)
+
         removeProxy: (id, callback) ->
           store.proxies (collection) ->
             collection.remove({_id: mongodb.ObjectID(id)}, callback)
@@ -135,10 +140,11 @@ mongo (db) ->
         broadcastConfig()
 
     socket.on 'proxy:update', (proxy) ->
-      delete proxies[proxy.id]
-      proxies[proxy.id] = proxy
+      db.updateProxy proxy, (result) ->
+        delete proxies[proxy.id]
+        proxies[result._id] = result
 
-      broadcastConfig()
+        broadcastConfig()
 
     socket.on 'proxy:remove', (id) ->
       db.removeProxy id, ->

@@ -8,11 +8,12 @@ Shark.service 'Proxies', (Socket) ->
 
     remove: (id) ->
       Socket.emit('proxy:remove', id)
-      delete service.list[id]
+      delete service.all[id]
       service.autoSelect() if service.selected && service.selected._id == id
 
     update: (proxy) ->
       proxy.alias = proxy.alias.toLowerCase()
+      service.all[proxy._id] = proxy
       Socket.emit('proxy:update', proxy)
 
     selected: null
@@ -36,6 +37,9 @@ Shark.service 'Proxies', (Socket) ->
 
   Socket.on 'proxy:list', (list) ->
     service.all = list
+
+    if service.selected
+      service.selected = list[service.selected._id]
 
     if !service.selected || !(service.selected._id in Object.keys(service.all))
       service.autoSelect()

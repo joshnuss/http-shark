@@ -3,11 +3,12 @@ window.Shark = angular.module('shark', ['ngRoute', 'btford.socket-io'])
 Shark.config ($routeProvider) ->
   $routeProvider
     .when '/proxies',
-      template: 'proxies'
+      controller: 'ProxiesCtrl'
+      templateUrl: 'views/proxies/index.html'
 
     .when '/proxies/add',
       controller: 'AddProxyCtrl'
-      templateUrl: 'views/proxy/add.html'
+      templateUrl: 'views/proxies/add.html'
 
     .when '/proxies/update/:proxyId',
       template: 'update'

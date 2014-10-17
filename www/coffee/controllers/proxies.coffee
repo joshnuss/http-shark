@@ -18,4 +18,5 @@ Shark.controller 'ProxiesCtrl', ($scope, Proxies) ->
     Proxies.select(proxy._id)
 
   $scope.remove = (proxy) ->
-    Proxies.remove(proxy._id)
+    if confirm("Are you sure you want to remove #{proxy.alias}?")
+      Proxies.remove(proxy._id)

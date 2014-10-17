@@ -113,7 +113,7 @@ mongo (db) ->
         targetDomain = proxy.url
         targetUrl = targetDomain + url.parse(request.url).path
 
-        console.log("PROXY: from #{request.headers.host}#{request.url} to #{targetUrl}")
+        console.log("PROXY: from #{host}#{request.url} to #{targetUrl}")
 
         request.url = targetUrl
 

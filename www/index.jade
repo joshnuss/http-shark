@@ -10,6 +10,8 @@ html
   body(ng-app='shark')
     ng-include(src="'views/header.html'")
 
+    ng-view
+
     div(ng-controller='ProxiesCtrl')
       .container(ng-if='!selected')
         .row(ng-controller='AddProxyCtrl')
@@ -51,5 +53,6 @@ html
     script(src='lib/bootstrap-sass/dist/js/bootstrap.js')
     script(src='/socket.io/socket.io.js')
     script(src='lib/angular/angular.min.js')
+    script(src='lib/angular-route/angular-route.min.js')
     script(src='lib/angular-socket-io/socket.min.js')
     script(src='js/application.js')

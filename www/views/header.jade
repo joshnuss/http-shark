@@ -1,0 +1,36 @@
+.navbar.navbar-default.navbar-fixed-top(role='navigation' ng-controller='ProxiesCtrl')
+  .container-fluid
+    .navbar-header
+      button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+        span.sr-only Toggle navigation
+        span.icon-bar
+        span.icon-bar
+        span.icon-bar
+      a.navbar-brand(href='#') http-shark
+
+    .navbar-collapse.collapse
+      ul.nav.navbar-nav.navbar-right
+        li(ng-show='selected')
+          a.btn.btn-default(ng-click='togglePaused()' ng-class="{'btn-primary': !paused}")
+            span.glyphicon.glyphicon-pause(ng-show='paused')
+            span.glyphicon.glyphicon-play(ng-hide='paused')
+        li
+          a.dropdown-toggle(href='#', data-toggle='dropdown')
+            span(ng-show='selected' ng-bind='selected.alias')
+            span(ng-hide='selected') Subdomains
+            span.caret
+
+          ul.dropdown-menu(role='menu')
+            li
+              a
+                span.glyphicon.glyphicon-plus
+                | &nbsp;
+                | Add Subdomain
+
+            li.divider
+
+            li(ng-repeat='proxy in proxies')
+              a(ng-click='select(proxy)')
+                b(ng-bind='proxy.alias')
+                p(ng-bind='proxy.url')
+                span.glyphicon.glyphicon-remove(ng-click='remove(proxy)')

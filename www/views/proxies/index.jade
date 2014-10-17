@@ -12,7 +12,7 @@
 
   .row.proxy(ng-repeat="(id, proxy) in proxies")
     .col-md-12
-      .well
+      .well(ng-click='select(proxy)')
         h2
           | http://
           b(ng-bind='proxy.alias')

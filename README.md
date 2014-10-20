@@ -54,7 +54,7 @@ http.get('http://paypal-proxy.local.dev/things')
 
 ### Visit the dashboard
 
-The dashboard is available at http://<domain or localhost>:<port>/dash
+The dashboard is available at `http://<domain or localhost>:<port>/dash`
 
 ## License
 

@@ -44,11 +44,6 @@ Either add a redirection in your `/etc/hosts`
 paypal-proxy.local.dev api.paypal.com
 ```
 
-```
-# redirect thru proxy
-api.paypal.com paypal-proxy.local.dev
-```
-
 Or find and replace the URL in your code, example:
 
 ```coffeescript
